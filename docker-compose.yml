@@ -21,7 +21,7 @@ services:
     devices:
       - /dev/net/tun # needed to handle wireguard interface
     volumes:
-      - ./vpn/config:/config # contains VPN configurations
+      - ./vpn_config:/config # contains VPN configurations
     healthcheck:
       test: ["CMD", "ip", "link", "show", "wg0", "up"]
       interval: 10s
