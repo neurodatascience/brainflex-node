@@ -1,0 +1,57 @@
+#
+# Fed-BioMed node connected to the researcher through a WireGuard VPN
+#
+# Adapted from Fed-BioMed (Apache-2.0):
+# https://github.com/fedbiomed/fedbiomed/blob/v6.4.1/envs/vpn/docker/docker-compose_run_node.yml
+#
+
+services:
+  #
+  # VPN client
+  vpn:
+    container_name: brainflex-vpn-${FBM_CONTAINER_INSTANCE_ID:-default}
+    hostname: brainflex-node-${FBM_CONTAINER_INSTANCE_ID:-default}
+    build:
+      context: ./docker/vpn
+    image: brainflex/vpn-client:${FBM_CONTAINER_VERSION_TAG:-unknown}
+    pull_policy: build
+    cap_add:
+      - net_admin # needed to handle wireguard interface
+      - sys_module # needed to remove wireguard kernel module
+    devices:
+      - /dev/net/tun # needed to handle wireguard interface
+    volumes:
+      - ./vpn/config:/config # contains VPN configurations
+    healthcheck:
+      test: ["CMD", "ip", "link", "show", "wg0", "up"]
+      interval: 10s
+      start_period: 10s
+    restart: unless-stopped
+  #
+  # Fed-BioMed node
+  node:
+    container_name: brainflex-node-${FBM_CONTAINER_INSTANCE_ID:-default}
+    image: fedbiomed/node:${FBM_CONTAINER_VERSION_TAG:-unknown}
+    network_mode: service:vpn
+    depends_on:
+      vpn:
+        condition: service_healthy
+        restart: true
+    # start as root so that the entrypoint can remap the `fedbiomed` user to
+    # CONTAINER_UID/CONTAINER_GID, it then drops privileges to `fedbiomed`
+    user: root
+    environment:
+      - CONTAINER_UID
+      - CONTAINER_GID
+      - FBM_RESEARCHER_IP=${FBM_RESEARCHER_IP:-10.222.0.2}
+      - FBM_RESEARCHER_PORT=${FBM_RESEARCHER_PORT:-50051}
+      - MNIST_OFF=True
+      - FBM_NODE_START_OPTIONS
+      - FBM_SECURITY_FORCE_SECURE_AGGREGATION
+      - FBM_SECURITY_TRAINING_PLAN_APPROVAL
+      - FBM_SECURITY_ALLOW_DEFAULT_TRAINING_PLANS
+      - FBM_SECURITY_ALLOW_PREPROC
+      - FBM_SECURITY_ALLOW_FEDERATED_ANALYTICS
+    volumes:
+      - ./fbm-node:/fbm-node # contains fedbiomed component configuration and data
+    restart: unless-stopped
