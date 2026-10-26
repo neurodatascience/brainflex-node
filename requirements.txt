@@ -1,0 +1,2 @@
+brainflex @ git+https://github.com/neurodatascience/brainflex.git@v0.1.0
+nipoppy==0.4.7
