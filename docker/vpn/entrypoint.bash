@@ -22,8 +22,8 @@ configure_wireguard
 
 trap finish TERM INT QUIT
 
-# the VPN server administrator needs this key to register this node
-echo "info: wireguard public key for this node: $(wg show wg0 public-key)"
+# the VPN server administrator needs this key to register this peer
+echo "info: wireguard public key for this peer: $(wg show wg0 public-key)"
 
 echo "VPN container is ready"
 sleep infinity &

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Wrapper for configure_peer.py, usable with `docker compose exec`
+# - reads the VPN server config.env (not inherited from the entrypoint)
+# - writes files with the identity of the config directory owner (host user)
+
+[ -f /config/config.env ] && source /config/config.env
+
+export CONTAINER_UID=$(stat -c %u /config)
+export CONTAINER_GID=$(stat -c %g /config)
+
+exec python3 /fedbiomed/vpn/bin/configure_peer.py "$@"
