@@ -8,7 +8,7 @@
 
 # main variables
 # --------------
-ALL_CONTAINERS=( vpnserver vpn node researcher-vpn researcher )
+ALL_CONTAINERS=( vpn node )
 VPN_SERVER_IP=10.220.0.1
 
 usage() {
@@ -27,7 +27,7 @@ usage() {
 Usage: ${0##*/} [CONTAINER...]
 
 give information on running container(s) and check the VPN connectivity:
-- ping the VPN server from the VPN client containers (vpn, researcher-vpn)
+- ping the VPN server from the node VPN container (vpn)
 - ping the researcher from the node VPN container (vpn)
 
 Optional CONTAINER name(s) restrict the checks to a subset of containers.
@@ -44,7 +44,7 @@ add_container() {
     container=$1
 
     case $container in
-        vpnserver|vpn|node|researcher-vpn|researcher)
+        vpn|node)
             # verify if container already in the list
             for c in "${ONLY_CONTAINERS[@]}"
             do
@@ -102,10 +102,7 @@ containers_status() {
                 check_ping "$i" "$VPN_SERVER_IP" "VPN server"
                 check_ping "$i" "$RESEARCHER_IP" "researcher"
                 ;;
-            researcher-vpn)
-                check_ping "$i" "$VPN_SERVER_IP" "VPN server"
-                ;;
-            *)  ;; # no ping: vpnserver is the server, node/researcher use the vpn containers network
+            *)  ;; # no ping: node uses the vpn container network
         esac
     done
 
@@ -122,8 +119,7 @@ containers_status() {
 # go to the directory containing docker-compose.yml
 cd "$(dirname "$0")/.." || exit 1
 
-# enable all profiles to see the researcher and VPN server containers
-DOCKER_COMPOSE=( docker compose --profile "*" )
+DOCKER_COMPOSE=( docker compose )
 ERROR=0
 
 # researcher address, as given to the node container

@@ -11,12 +11,3 @@ vpn_config/**
 fbm-node/**
 !fbm-node/**/
 !fbm-node/**/.gitkeep
-vpnserver_config/**
-!vpnserver_config/**/
-!vpnserver_config/**/.gitkeep
-researcher_vpn_config/**
-!researcher_vpn_config/**/
-!researcher_vpn_config/**/.gitkeep
-fbm-researcher/**
-!fbm-researcher/**/
-!fbm-researcher/**/.gitkeep
