@@ -1,4 +1,8 @@
+# environment variables
 .env
+
+# data
+data/
 
 # container run-time files (VPN keys, node configuration and data)
 vpn_config/**
