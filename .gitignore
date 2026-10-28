@@ -2,7 +2,7 @@
 .env
 
 # data
-data/
+nipoppy_study/
 
 # container run-time files (VPN keys, node configuration and data)
 vpn_config/**
