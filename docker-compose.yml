@@ -43,6 +43,7 @@ services:
     environment:
       - CONTAINER_UID
       - CONTAINER_GID
+      - FBM_NODE_NAME
       - FBM_RESEARCHER_IP=${FBM_RESEARCHER_IP:-10.222.0.2}
       - FBM_RESEARCHER_PORT=${FBM_RESEARCHER_PORT:-50051}
       - MNIST_OFF=True
@@ -54,10 +55,11 @@ services:
       - FBM_SECURITY_ALLOW_FEDERATED_ANALYTICS
       - NIPOPPY_ROOT=/nipoppy_study
     volumes:
-      - ./fbm-node:/fbm-node # contains fedbiomed component configuration and data
+      - ./fbm-node:/fbm-node # hardcoded because it is hardcoded in the node image as well
+      - ./scripts/set_node_name.sh:/entrypoint-root.sh:ro # sets the node name from FBM_NODE_NAME
       # Nipoppy study files
       - type: bind
-        source: ${NIPOPPY_ROOT:?set NIPOPPY_ROOT in .env}
+        source: ${NIPOPPY_ROOT:-./nipoppy_study}
         target: /nipoppy_study
         read_only: true
         bind:
