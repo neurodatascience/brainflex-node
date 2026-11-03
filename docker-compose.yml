@@ -11,10 +11,7 @@ services:
   vpn:
     container_name: brainflex-vpn-${FBM_CONTAINER_INSTANCE_ID:-default}
     hostname: brainflex-node-${FBM_CONTAINER_INSTANCE_ID:-default}
-    build:
-      context: https://github.com/neurodatascience/brainflex.git#main:docker/vpn-client
-    image: brainflex/vpn-client:local
-    pull_policy: build
+    image: ghcr.io/neurodatascience/brainflex-vpn-client:0.1.0@sha256:1c353258abde508771422e71384301aea88915b2f34bd2e236f3c8a9ab250de4
     cap_add:
       - net_admin # needed to handle wireguard interface
     devices:
