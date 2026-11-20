@@ -53,6 +53,7 @@ services:
     volumes:
       - ./fbm-node:/fbm-node # hardcoded because it is hardcoded in the node image as well
       - ./scripts/set_node_name.sh:/entrypoint-root.sh:ro # sets the node name from FBM_NODE_NAME
+      - ./supervisord.conf.template:/etc/supervisor/supervisord.conf.template:ro
       # Nipoppy study files
       - type: bind
         source: ${NIPOPPY_ROOT:-./nipoppy_study}

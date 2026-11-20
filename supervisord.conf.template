@@ -1,0 +1,27 @@
+; Adapted from fedbiomed/fedbiomed v6.4.1 docker/node/supervisord-node-api.conf.template
+[supervisord]
+nodaemon=true
+logfile=/home/$FEDBIOMED_USER/log/supervisord.log
+pidfile=/home/$FEDBIOMED_USER/supervisor.pid
+
+[unix_http_server]
+file=/tmp/supervisor.sock
+chmod=0700
+
+[supervisorctl]
+serverurl=unix:///tmp/supervisor.sock
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[program:fedbiomed-api]
+; The container hostname resolves to its Docker bridge address.
+command=/usr/local/bin/fedbiomed node -p /fbm-node gui start --host ${HOSTNAME}
+user=${FEDBIOMED_USER}
+autostart=false
+autorestart=unexpected
+stopasgroup=true
+killasgroup=true
+startretries=3
+stdout_logfile=/home/$FEDBIOMED_USER/log/fedbiomed-node-api.log
+stderr_logfile=/home/$FEDBIOMED_USER/log/fedbiomed-node-api.err
